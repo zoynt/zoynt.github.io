@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS Location and Map Viewer</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+  body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* margin: 10px 120px 15px; */
+    margin-left: 200px;
+    margin-right: 200px;
+    background-color: blanchedalmond; 
+  }
+  .konten {
+    background-color: burlywood;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  h1, h2 {
+    color: #333; /* Warna teks untuk judul */
+    text-align: center; /* Pusatkan judul */
+  }
+  table {
+    width: 50%; /* Lebar tabel penuh */
+    border-collapse: collapse; 
+  }
+  th, td {
+    padding: 5px; 
+    text-align: left; /* Penjajaran teks */
+  }
+  th {
+    background-color: #f2f2f2; /* Warna latar belakang header tabel */
+    color: black; /* Warna teks header */
+  }
+  #location, #address {
+    font-size: 16px;
+    max-width: 500px;
+  }
+  #map {
+    width: 80%;
+    height: 300px; 
+  }
+</style>
+</head>
+<body>
+    
+  <div class="konten">
+<h1>GPS Location</h1>
+<h2>Tugas Kuliah</h2>
+<table>
+    <tr>
+        <td>Nama MK</td>
+        <td>Kartografi dan Geospasial</td>
+    </tr>
+    <tr>
+        <td>Prodi</td>
+        <td>D4 SIKC</td>
+    </tr>
+    <tr>
+        <td>Kampus</td>
+        <td>Politeknik Negeri Banjarmasin</td>
+    </tr>
+    <tr>
+        <td>Dosen Pengampu</td>
+        <td>Agus SBN</td>
+    </tr>
+    <tr>
+        <td>Nama</td>
+        <td>Zoya Nujula Ramadhoni</td>
+    </tr>
+    <tr>
+        <td>NIM</td>
+        <td>C050422022</td>
+    </tr>
+    <tr>
+        <td>Kelas</td>
+        <td>SIKC-4A</td>
+    </tr>
+    <tr>
+        <td>Tanggal</td>
+        <td>23 April 2024</td>
+    </tr>
+</table>
+<p id="location">Locating...</p>
+<p id="address">Address will be displayed here...</p>
+<div id="map"></div>
+</div>
+
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  var map, marker;
+
+  function initMap() {
+    map = L.map('map').setView([51.505, -0.09], 13); // Default location and zoom level
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+  }
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+    }
+  }
+
+  function showPosition(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    document.getElementById("location").innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
+    const pos = new L.LatLng(latitude, longitude);
+    map.setView(pos, 15); // Set the zoom level to 15 when showing the location
+
+    if (marker) {
+      marker.setLatLng(pos);
+    } else {
+      marker = L.marker(pos).addTo(map);
+    }
+    getAddress(latitude, longitude);
+  }
+
+  function getAddress(latitude, longitude) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("address").innerHTML = "Address: " + data.display_name;
+      })
+      .catch(error => {
+        document.getElementById("address").innerHTML = "Error getting address: " + error;
+      });
+  }
+
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        document.getElementById("location").innerHTML = "User denied the request for Geolocation."
+        break;
+      case error.POSITION_UNAVAILABLE:
+        document.getElementById("location").innerHTML = "Location information is unavailable."
+        break;
+      case error.TIMEOUT:
+        document.getElementById("location").innerHTML = "The request to get user location timed out."
+        break;
+      case error.UNKNOWN_ERROR:
+        document.getElementById("location").innerHTML = "An unknown error occurred."
+        break;
+    }
+  }
+
+  window.onload = function() {
+    initMap();
+    getLocation();
+  };
+</script>
+</body>
+</html>
