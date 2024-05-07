@@ -8,9 +8,8 @@
 <style>
   body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    /* margin: 10px 120px 15px; */
-    margin-left: 100px;
-    margin-right: 100px;
+    /* margin-left: 100px;
+    margin-right: 100px; */
     background-color: blanchedalmond; 
   }
   .konten {
@@ -24,6 +23,7 @@
   }
   table {
     width: 50%; /* Lebar tabel penuh */
+    margin: 0 auto;
     border-collapse: collapse; 
   }
   th, td {
@@ -35,13 +35,47 @@
     color: black; /* Warna teks header */
   }
   #location, #address {
+    padding: 10px;
+    margin: 0 auto;
     font-size: 16px;
     max-width: 500px;
   }
   #map {
+    margin: 0 auto;
     width: 80%;
     height: 300px; 
   }
+  @media (min-width: 600px) {
+      body {
+        margin: 20px 50px;
+      }
+  
+      .konten {
+        padding: 20px;
+      }
+  
+      table {
+        width: 80%; /* Larger screens will have a narrower table */
+      }
+  
+      #map {
+        height: 400px;
+      }
+    }
+  
+    @media (min-width: 1000px) {
+      body {
+        margin: 20px 100px;
+      }
+  
+      table {
+        width: 60%; /* Even narrower on larger screens */
+      }
+  
+      #map {
+        height: 500px;
+      }
+    }
 </style>
 </head>
 <body>
